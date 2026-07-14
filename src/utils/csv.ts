@@ -10,7 +10,7 @@ export function downloadFile(filename: string, content: string, mime: string) {
   URL.revokeObjectURL(url);
 }
 
-export function toCSV(rows: Record<string, unknown>[]): string {
+export function toCSV<T extends object>(rows: T[]) {
   if (rows.length === 0) return '';
   const headers = Object.keys(rows[0]);
   const escape = (val: unknown) => {
@@ -22,12 +22,15 @@ export function toCSV(rows: Record<string, unknown>[]): string {
   };
   const lines = [headers.join(',')];
   for (const row of rows) {
-    lines.push(headers.map((h) => escape(row[h])).join(','));
+    lines.push(headers.map((h) => escape((row as Record<string, unknown>)[h])).join(','));
   }
   return lines.join('\n');
 }
 
-export function exportCSV(filename: string, rows: Record<string, unknown>[]) {
+export function exportCSV<T extends object>(
+  filename: string,
+  rows: T[]
+) {
   downloadFile(filename, toCSV(rows), 'text/csv;charset=utf-8;');
 }
 

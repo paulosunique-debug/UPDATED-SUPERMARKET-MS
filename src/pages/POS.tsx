@@ -31,7 +31,12 @@ import { useTranslation } from '../hooks/useTranslation';
 import { formatCurrency, round2 } from '../utils/currency';
 import { formatDateTime } from '../utils/date';
 import { cn } from '../utils/cn';
-import type { PaymentMethod, Sale } from '../types';
+import type {
+  Sale,
+  Product,
+  PaymentMethod,
+  SplitPaymentPart
+} from '../types';
 
 function CartPanel({ onCharge }: { onCharge: () => void }) {
   const cart = useCartStore();
@@ -254,11 +259,11 @@ export default function POS() {
       paymentMethod: method,
       splitPayments:
         method === 'split'
-          ? [
+          ? ([
               { method: 'cash', amount: Number(splitCash) },
               { method: 'card', amount: Number(splitCard) },
               { method: 'mobile-money', amount: Number(splitMobile) }
-            ].filter((p) => p.amount > 0)
+            ] as SplitPaymentPart[]).filter((p) => p.amount > 0)
           : null,
       status: 'completed'
     });
